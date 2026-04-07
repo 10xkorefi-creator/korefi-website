@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { BlogPost } from '@/lib/supabase'
-import Navbar from '@/components/korefi/navbar'
-import Footer from '@/components/korefi/footer'
+import { Navbar } from '@/components/korefi/navbar'
+import { Footer } from '@/components/korefi/footer'
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)

@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Navbar from '@/components/korefi/navbar'
-import Footer from '@/components/korefi/footer'
+import { Navbar } from '@/components/korefi/navbar'
+import { Footer } from '@/components/korefi/footer'
 
 export default function NotFound() {
   return (
