@@ -34,14 +34,21 @@ export default function BlogPage() {
   useEffect(() => {
     async function fetchPosts() {
       try {
+        console.log('[v0] Fetching posts from korefi_blog table...')
+        console.log('[v0] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+        
         const { data, error } = await supabase
           .from('korefi_blog')
-          .select('id, created_at, "Name", slug, "Description"')
+          .select('id, created_at, Name, slug, Description')
           .order('created_at', { ascending: false })
+
+        console.log('[v0] Supabase response - data:', data)
+        console.log('[v0] Supabase response - error:', error)
 
         if (error) throw error
         setPosts(data || [])
       } catch (err) {
+        console.log('[v0] Fetch error:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch posts')
       } finally {
         setLoading(false)

@@ -8,11 +8,16 @@ interface Props {
 }
 
 async function getPost(slug: string): Promise<BlogPost | null> {
+  console.log('[v0] Fetching post with slug:', slug)
+  
   const { data, error } = await supabase
     .from('korefi_blog')
     .select('*')
     .eq('slug', slug)
     .single()
+
+  console.log('[v0] Post fetch result - data:', data)
+  console.log('[v0] Post fetch result - error:', error)
 
   if (error || !data) return null
   return data

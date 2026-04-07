@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 
 interface NavbarProps {
-  onOpenModal: () => void
+  onOpenModal?: () => void
 }
 
 export function Navbar({ onOpenModal }: NavbarProps) {
@@ -25,15 +25,28 @@ export function Navbar({ onOpenModal }: NavbarProps) {
         <a href="/#the-solution" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">How we fix it</a>
         <a href="/#the-payoff" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">What you get</a>
         <a href="/about" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">Why us</a>
-        <button
-          onClick={onOpenModal}
-          className="inline-flex items-center justify-center px-[22px] py-[10px] bg-korefi-black text-korefi-offwhite text-[14px] font-medium rounded-[6px] hover:bg-[#314dd0] relative overflow-hidden group transition-colors duration-300"
-        >
-          <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[6px]">
-            <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
-          </span>
-          <span className="relative z-10">Join the waitlist</span>
-        </button>
+        <a href="/blog" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">Blog</a>
+        {onOpenModal ? (
+          <button
+            onClick={onOpenModal}
+            className="inline-flex items-center justify-center px-[22px] py-[10px] bg-korefi-black text-korefi-offwhite text-[14px] font-medium rounded-[6px] hover:bg-[#314dd0] relative overflow-hidden group transition-colors duration-300"
+          >
+            <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[6px]">
+              <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
+            </span>
+            <span className="relative z-10">Join the waitlist</span>
+          </button>
+        ) : (
+          <a
+            href="/"
+            className="inline-flex items-center justify-center px-[22px] py-[10px] bg-korefi-black text-korefi-offwhite text-[14px] font-medium rounded-[6px] hover:bg-[#314dd0] relative overflow-hidden group transition-colors duration-300"
+          >
+            <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[6px]">
+              <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
+            </span>
+            <span className="relative z-10">Join the waitlist</span>
+          </a>
+        )}
       </div>
     </motion.nav>
   )
