@@ -33,6 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.Name)}`
+
   return {
     title: `${post.Name} — KoreFi Blog`,
     description: post.Description || 'Read this article on the KoreFi Blog.',
@@ -41,6 +43,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.Description || 'Read this article on the KoreFi Blog.',
       type: 'article',
       publishedTime: post.created_at,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.Name,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.Name,
+      description: post.Description || 'Read this article on the KoreFi Blog.',
+      images: [ogImageUrl],
     },
   }
 }
