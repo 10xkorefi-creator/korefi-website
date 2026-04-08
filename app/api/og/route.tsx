@@ -60,115 +60,74 @@ export async function GET(request: NextRequest) {
 
   const balancedLines = balanceLines(title)
 
+  let fontData: ArrayBuffer | null = null
   try {
-    const fontData = await fetch(
-      'https://cdn.jsdelivr.net/fontsource/fonts/playfair-display@latest/latin-700-normal.ttf'
+    fontData = await fetch(
+      'https://cdn.jsdelivr.net/fontsource/fonts/outfit@latest/latin-500-normal.ttf'
     ).then(res => {
       if (!res.ok) throw new Error('Font fetch failed')
       return res.arrayBuffer()
     })
-
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '80px',
-            background: 'linear-gradient(135deg, #00008d 0%, #000020 50%, #0a0a2e 100%)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              color: 'white',
-              fontSize: '72px',
-              fontWeight: 700,
-              fontFamily: "'Playfair Display', serif",
-              letterSpacing: '-1px',
-              lineHeight: 1.2,
-              textShadow: '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
-              maxWidth: '100%',
-            }}
-          >
-            {balancedLines.map((line, index) => (
-              <div key={index} style={{ display: 'flex' }}>
-                {line}
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-      {
-        width: 1200,
-        height: 630,
-        fonts: [
-          {
-            name: 'Playfair Display',
-            data: fontData,
-            weight: 700,
-            style: 'normal',
-          },
-        ],
-        headers: {
-          'Cache-Control': 'public, max-age=60',
-        },
-      }
-    )
   } catch {
-    // Fallback without custom font if font fetch fails
-    return new ImageResponse(
-      (
+    // Font fetch failed, will use fallback sans-serif
+  }
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '80px',
+          backgroundImage: 'url(https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bg-new.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div
           style={{
-            width: '100%',
-            height: '100%',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '80px',
-            background: 'linear-gradient(135deg, #00008d 0%, #000020 50%, #0a0a2e 100%)',
+            textAlign: 'center',
+            color: 'white',
+            fontSize: '72px',
+            fontWeight: 500,
+            fontFamily: fontData ? "'Outfit', sans-serif" : 'sans-serif',
+            letterSpacing: '-1px',
+            lineHeight: 1.2,
+            textShadow: '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
+            maxWidth: '100%',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              color: 'white',
-              fontSize: '72px',
-              fontWeight: 700,
-              fontFamily: 'sans-serif',
-              letterSpacing: '-1px',
-              lineHeight: 1.2,
-              textShadow: '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
-              maxWidth: '100%',
-            }}
-          >
-            {balancedLines.map((line, index) => (
-              <div key={index} style={{ display: 'flex' }}>
-                {line}
-              </div>
-            ))}
-          </div>
+          {balancedLines.map((line, index) => (
+            <div key={index} style={{ display: 'flex' }}>
+              {line}
+            </div>
+          ))}
         </div>
-      ),
-      {
-        width: 1200,
-        height: 630,
-        headers: {
-          'Cache-Control': 'public, max-age=60',
-        },
-      }
-    )
-  }
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 630,
+      fonts: fontData
+        ? [
+            {
+              name: 'Outfit',
+              data: fontData,
+              weight: 500,
+              style: 'normal',
+            },
+          ]
+        : [],
+      headers: {
+        'Cache-Control': 'public, max-age=60',
+      },
+    }
+  )
 }
