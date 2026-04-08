@@ -65,9 +65,9 @@ export default function BlogPostClient({ post }: Props) {
               console.log('[v0] Blog post image URL:', imageUrl, 'for post:', post.Name)
               return null
             })()}
-            <div className="flex flex-col-reverse md:flex-row md:gap-10 md:items-start">
-              {/* Left Column - Title and Meta */}
-              <div className="flex-1 mt-6 md:mt-0">
+            <div className="flex flex-col md:flex-row md:gap-10 md:items-center">
+              {/* Left Column - Title and Meta (60-65% width) */}
+              <div className="flex-1 md:w-[60%] order-2 md:order-1 mt-6 md:mt-0">
                 <time
                   className="text-[14px] font-medium"
                   style={{ color: '#9a9488' }}
@@ -90,13 +90,13 @@ export default function BlogPostClient({ post }: Props) {
                 )}
               </div>
               
-              {/* Right Column - Image */}
-              <div className="w-full md:w-[340px] flex-shrink-0">
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-md">
+              {/* Right Column - Image (35-40% width) */}
+              <div className="w-full md:w-[38%] flex-shrink-0 order-1 md:order-2 flex items-center justify-center">
+                <div className="w-full overflow-hidden rounded-xl shadow-md">
                   <img
                     src={getBlogImageUrl(post)}
                     alt={post.Name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                   />
                 </div>
               </div>
