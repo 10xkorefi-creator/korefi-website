@@ -25,7 +25,6 @@ export function Navbar({ onOpenModal }: NavbarProps) {
         <a href="/#the-solution" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">How we fix it</a>
         <a href="/#the-payoff" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">What you get</a>
         <a href="/about" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">Why us</a>
-        <a href="/blog" className="hidden md:block text-[13px] text-korefi-text-secondary hover:text-korefi-black transition-colors">Blog</a>
         {onOpenModal ? (
           <button
             onClick={onOpenModal}
