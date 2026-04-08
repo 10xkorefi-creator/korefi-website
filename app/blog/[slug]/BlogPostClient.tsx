@@ -58,7 +58,7 @@ export default function BlogPostClient({ post }: Props) {
             Back to Blog
           </Link>
 
-          <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-center">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-stretch">
             {/* Left Column - Title and Meta (3/5 = 60%) */}
             <div className="w-full md:w-3/5 order-2 md:order-1">
               <time
@@ -84,12 +84,12 @@ export default function BlogPostClient({ post }: Props) {
             </div>
             
             {/* Right Column - Image (2/5 = 40%) */}
-            <div className="w-full md:w-2/5 order-1 md:order-2 flex items-center">
-              <div className="w-full overflow-hidden rounded-xl shadow-md">
+            <div className="w-full md:w-2/5 order-1 md:order-2">
+              <div className="w-full h-full overflow-hidden rounded-[10px] shadow-md">
                 <img
                   src={getBlogImageUrl(post)}
                   alt={post.Name}
-                  className="w-full h-auto object-contain"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </div>
