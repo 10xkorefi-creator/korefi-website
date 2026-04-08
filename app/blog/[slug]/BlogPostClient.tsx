@@ -96,7 +96,7 @@ export default function BlogPostClient({ post }: Props) {
           </div>
         </header>
 
-        <div className="max-w-[720px] mx-auto">
+        <div className="max-w-[960px] mx-auto">
           {/* Divider */}
           <div
             className="h-[1px] mb-10"
