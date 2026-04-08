@@ -26,7 +26,6 @@ function formatDate(dateString: string): string {
 function BlogCardSkeleton() {
   return (
     <div className="py-8 border-b animate-pulse" style={{ borderColor: '#E0DED6' }}>
-      <div className="aspect-video w-full rounded-lg mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-32 rounded mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-7 w-3/4 rounded mb-3" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-full rounded mb-2" style={{ backgroundColor: '#E0DED6' }} />
@@ -118,7 +117,10 @@ export default function BlogPage() {
                 <p>No blog posts yet. Check back soon!</p>
               </div>
             ) : (
-              posts.map((post, index) => (
+              posts.map((post, index) => {
+                const imageUrl = getBlogImageUrl(post)
+                console.log('[v0] Blog card image URL:', imageUrl, 'for post:', post.Name)
+                return (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
@@ -126,12 +128,10 @@ export default function BlogPage() {
                   style={{ borderColor: index === posts.length - 1 ? 'transparent' : '#E0DED6' }}
                 >
                   <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
-                    <Image
-                      src={getBlogImageUrl(post)}
+                    <img
+                      src={imageUrl}
                       alt={post.Name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 720px"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <time
@@ -176,7 +176,7 @@ export default function BlogPage() {
                     </svg>
                   </span>
                 </Link>
-              ))
+              )})
             )}
           </div>
         </div>

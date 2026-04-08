@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
@@ -61,6 +60,11 @@ export default function BlogPostClient({ post }: Props) {
 
           {/* Header - Two Column Layout */}
           <header className="mb-10">
+            {(() => {
+              const imageUrl = getBlogImageUrl(post)
+              console.log('[v0] Blog post image URL:', imageUrl, 'for post:', post.Name)
+              return null
+            })()}
             <div className="flex flex-col-reverse md:flex-row md:gap-10 md:items-start">
               {/* Left Column - Title and Meta */}
               <div className="flex-1 mt-6 md:mt-0">
@@ -89,13 +93,10 @@ export default function BlogPostClient({ post }: Props) {
               {/* Right Column - Image */}
               <div className="w-full md:w-[340px] flex-shrink-0">
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-md">
-                  <Image
+                  <img
                     src={getBlogImageUrl(post)}
                     alt={post.Name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 340px"
-                    priority
+                    className="w-full h-full object-cover"
                   />
                 </div>
               </div>
