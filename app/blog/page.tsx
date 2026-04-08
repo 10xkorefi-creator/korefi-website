@@ -23,6 +23,30 @@ function formatDate(dateString: string): string {
   })
 }
 
+function BlogCardImage({ src, alt }: { src: string; alt: string }) {
+  const [isLoaded, setIsLoaded] = useState(false)
+  
+  return (
+    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
+      {/* Blur placeholder */}
+      <div 
+        className={`absolute inset-0 bg-gradient-to-br from-[#E8E6DE] to-[#D4D2CA] transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
+      >
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent" 
+          style={{ animation: 'shimmer 1.5s infinite' }} 
+        />
+      </div>
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        onLoad={() => setIsLoaded(true)}
+        loading="lazy"
+      />
+    </div>
+  )
+}
+
 function BlogCardSkeleton() {
   return (
     <div className="p-4 border rounded-lg animate-pulse" style={{ borderColor: '#E0DED6' }}>
@@ -43,21 +67,14 @@ export default function BlogPage() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        console.log('[v0] Fetching posts from korefi_blog table...')
-        console.log('[v0] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-        
         const { data, error } = await supabase
           .from('korefi_blog')
           .select('id, created_at, Name, slug, Description, Image')
           .order('created_at', { ascending: false })
 
-        console.log('[v0] Supabase response - data:', data)
-        console.log('[v0] Supabase response - error:', error)
-
         if (error) throw error
         setPosts(data || [])
       } catch (err) {
-        console.log('[v0] Fetch error:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch posts')
       } finally {
         setLoading(false)
@@ -121,7 +138,6 @@ export default function BlogPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => {
                 const imageUrl = getBlogImageUrl(post)
-                console.log('[v0] Blog card image URL:', imageUrl, 'for post:', post.Name)
                 return (
                 <Link
                   key={post.id}
@@ -129,13 +145,7 @@ export default function BlogPage() {
                   className="block p-4 transition-colors duration-200 hover:bg-[#F3F2EC] rounded-lg border"
                   style={{ borderColor: '#E0DED6' }}
                 >
-                  <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
-                    <img
-                      src={imageUrl}
-                      alt={post.Name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <BlogCardImage src={imageUrl} alt={post.Name} />
                   <time
                     className="text-[13px] font-medium"
                     style={{ color: '#9a9488' }}
