@@ -3,9 +3,66 @@ import { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
+function balanceLines(title: string): string[] {
+  const words = title.split(/\s+/).filter(w => w.length > 0)
+  
+  // If 3 or fewer words, render as one line
+  if (words.length <= 3) {
+    return [words.join(' ')]
+  }
+  
+  // For longer titles, split into balanced lines where each line has at least 2 words
+  const totalWords = words.length
+  
+  // Calculate ideal split point to avoid orphan (single word on last line)
+  // If odd number of words, put more on first line
+  const midpoint = Math.ceil(totalWords / 2)
+  
+  // Ensure last line has at least 2 words
+  let splitPoint = midpoint
+  if (totalWords - midpoint < 2) {
+    splitPoint = totalWords - 2
+  }
+  
+  const lines: string[] = []
+  
+  if (totalWords <= 6) {
+    // For short-medium titles, split into 2 lines
+    lines.push(words.slice(0, splitPoint).join(' '))
+    lines.push(words.slice(splitPoint).join(' '))
+  } else {
+    // For longer titles, split into 3 lines
+    const thirdPoint = Math.ceil(totalWords / 3)
+    const twoThirdPoint = Math.ceil((totalWords * 2) / 3)
+    
+    // Adjust to ensure no line has fewer than 2 words
+    let firstSplit = thirdPoint
+    let secondSplit = twoThirdPoint
+    
+    if (totalWords - secondSplit < 2) {
+      secondSplit = totalWords - 2
+    }
+    if (secondSplit - firstSplit < 2) {
+      firstSplit = Math.max(2, secondSplit - 2)
+    }
+    
+    lines.push(words.slice(0, firstSplit).join(' '))
+    lines.push(words.slice(firstSplit, secondSplit).join(' '))
+    lines.push(words.slice(secondSplit).join(' '))
+  }
+  
+  return lines.filter(line => line.length > 0)
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || 'Korefi Blog'
+
+  const fontData = await fetch(
+    'https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf'
+  ).then(res => res.arrayBuffer())
+
+  const balancedLines = balanceLines(title)
 
   return new ImageResponse(
     (
@@ -17,7 +74,7 @@ export async function GET(request: NextRequest) {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px',
-          backgroundImage: 'url(https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/blueGradient.png)',
+          backgroundImage: 'url(https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bg-new.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -25,26 +82,39 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
             color: 'white',
-            fontSize: '64px',
+            fontSize: '72px',
             fontWeight: 700,
-            fontFamily: 'sans-serif',
+            fontFamily: "'Playfair Display', serif",
             letterSpacing: '-1px',
             lineHeight: 1.2,
-            textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+            textShadow: '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
             maxWidth: '100%',
           }}
         >
-          {title}
+          {balancedLines.map((line, index) => (
+            <div key={index} style={{ display: 'flex' }}>
+              {line}
+            </div>
+          ))}
         </div>
       </div>
     ),
     {
       width: 1200,
       height: 630,
+      fonts: [
+        {
+          name: 'Playfair Display',
+          data: fontData,
+          weight: 700,
+          style: 'normal',
+        },
+      ],
       headers: {
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
