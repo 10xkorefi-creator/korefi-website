@@ -2,9 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase, BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
+
+function getBlogImageUrl(post: BlogPost): string {
+  if (post.Image && post.Image.trim() !== '') {
+    return post.Image
+  }
+  return `/api/og?title=${encodeURIComponent(post.Name)}`
+}
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -17,7 +25,8 @@ function formatDate(dateString: string): string {
 
 function BlogCardSkeleton() {
   return (
-    <div className="py-8 border-b animate-pulse" style={{ borderColor: '#E0DED6' }}>
+    <div className="p-4 border rounded-lg animate-pulse" style={{ borderColor: '#E0DED6' }}>
+      <div className="aspect-video w-full rounded-lg mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-32 rounded mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-7 w-3/4 rounded mb-3" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-full rounded mb-2" style={{ backgroundColor: '#E0DED6' }} />
@@ -39,7 +48,7 @@ export default function BlogPage() {
         
         const { data, error } = await supabase
           .from('korefi_blog')
-          .select('id, created_at, Name, slug, Description')
+          .select('id, created_at, Name, slug, Description, Image')
           .order('created_at', { ascending: false })
 
         console.log('[v0] Supabase response - data:', data)
@@ -63,7 +72,7 @@ export default function BlogPage() {
       <Navbar />
       
       <div className="pt-32 pb-20 px-6">
-        <div className="max-w-[720px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="mb-12">
             <span
@@ -89,11 +98,11 @@ export default function BlogPage() {
           {/* Blog List */}
           <div>
             {loading ? (
-              <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <BlogCardSkeleton />
                 <BlogCardSkeleton />
                 <BlogCardSkeleton />
-              </>
+              </div>
             ) : error ? (
               <div
                 className="py-8 text-center rounded-lg"
@@ -109,13 +118,24 @@ export default function BlogPage() {
                 <p>No blog posts yet. Check back soon!</p>
               </div>
             ) : (
-              posts.map((post, index) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {posts.map((post) => {
+                const imageUrl = getBlogImageUrl(post)
+                console.log('[v0] Blog card image URL:', imageUrl, 'for post:', post.Name)
+                return (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
-                  className="block py-8 border-b transition-colors duration-200 hover:bg-[#F3F2EC] -mx-4 px-4 rounded-lg"
-                  style={{ borderColor: index === posts.length - 1 ? 'transparent' : '#E0DED6' }}
+                  className="block p-4 transition-colors duration-200 hover:bg-[#F3F2EC] rounded-lg border"
+                  style={{ borderColor: '#E0DED6' }}
                 >
+                  <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
+                    <img
+                      src={imageUrl}
+                      alt={post.Name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <time
                     className="text-[13px] font-medium"
                     style={{ color: '#9a9488' }}
@@ -157,8 +177,9 @@ export default function BlogPage() {
                       />
                     </svg>
                   </span>
-                </Link>
-              ))
+</Link>
+              )})}
+              </div>
             )}
           </div>
         </div>

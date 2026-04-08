@@ -5,6 +5,13 @@ import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
 
+function getBlogImageUrl(post: BlogPost): string {
+  if (post.Image && post.Image.trim() !== '') {
+    return post.Image
+  }
+  return `/api/og?title=${encodeURIComponent(post.Name)}`
+}
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
@@ -26,11 +33,11 @@ export default function BlogPostClient({ post }: Props) {
       <Navbar />
       
       <article className="pt-32 pb-20 px-6">
-        <div className="max-w-[720px] mx-auto">
-          {/* Back Link */}
+        {/* Header - Two Column Layout */}
+        <header className="max-w-[960px] mx-auto mb-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-[14px] font-medium mb-8 transition-colors hover:opacity-70"
+            className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
             style={{ color: '#314dd0' }}
           >
             <svg
@@ -51,30 +58,45 @@ export default function BlogPostClient({ post }: Props) {
             Back to Blog
           </Link>
 
-          {/* Header */}
-          <header className="mb-10">
-            <time
-              className="text-[14px] font-medium"
-              style={{ color: '#9a9488' }}
-            >
-              {formatDate(post.created_at)}
-            </time>
-            <h1
-              className="font-serif text-[38px] md:text-[46px] font-medium mt-3"
-              style={{ color: '#111110', lineHeight: 1.15 }}
-            >
-              {post.Name}
-            </h1>
-            {post.Description && (
-              <p
-                className="text-[18px] mt-4"
-                style={{ color: '#5a5a54', lineHeight: 1.6 }}
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-stretch">
+            {/* Left Column - Title and Meta (3/5 = 60%) */}
+            <div className="w-full md:w-3/5 order-2 md:order-1">
+              <time
+                className="text-[14px] font-medium"
+                style={{ color: '#9a9488' }}
               >
-                {post.Description}
-              </p>
-            )}
-          </header>
+                {formatDate(post.created_at)}
+              </time>
+              <h1
+                className="font-serif text-[32px] md:text-[42px] font-medium mt-3"
+                style={{ color: '#111110', lineHeight: 1.15 }}
+              >
+                {post.Name}
+              </h1>
+              {post.Description && (
+                <p
+                  className="text-[17px] mt-4"
+                  style={{ color: '#5a5a54', lineHeight: 1.6 }}
+                >
+                  {post.Description}
+                </p>
+              )}
+            </div>
+            
+            {/* Right Column - Image (2/5 = 40%) */}
+            <div className="w-full md:w-2/5 order-1 md:order-2">
+              <div className="w-full h-full overflow-hidden rounded-[10px] shadow-md">
+                <img
+                  src={getBlogImageUrl(post)}
+                  alt={post.Name}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            </div>
+          </div>
+        </header>
 
+        <div className="max-w-[960px] mx-auto">
           {/* Divider */}
           <div
             className="h-[1px] mb-10"
