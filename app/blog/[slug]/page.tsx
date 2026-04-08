@@ -8,12 +8,14 @@ interface Props {
 }
 
 async function getPost(slug: string): Promise<BlogPost | null> {
-  console.log('[v0] Fetching post with slug:', slug)
+  // Decode URL-encoded characters (e.g., %26 -> &)
+  const decodedSlug = decodeURIComponent(slug)
+  console.log('[v0] Fetching post with slug:', slug, '-> decoded:', decodedSlug)
   
   const { data, error } = await supabase
     .from('korefi_blog')
     .select('*')
-    .eq('slug', slug)
+    .eq('slug', decodedSlug)
     .single()
 
   console.log('[v0] Post fetch result - data:', data)
