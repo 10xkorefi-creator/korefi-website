@@ -2,9 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase, BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
+
+function getBlogImageUrl(post: BlogPost): string {
+  if (post.Image && post.Image.trim() !== '') {
+    return post.Image
+  }
+  return `/api/og?title=${encodeURIComponent(post.Name)}`
+}
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -18,6 +26,7 @@ function formatDate(dateString: string): string {
 function BlogCardSkeleton() {
   return (
     <div className="py-8 border-b animate-pulse" style={{ borderColor: '#E0DED6' }}>
+      <div className="aspect-video w-full rounded-lg mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-32 rounded mb-4" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-7 w-3/4 rounded mb-3" style={{ backgroundColor: '#E0DED6' }} />
       <div className="h-4 w-full rounded mb-2" style={{ backgroundColor: '#E0DED6' }} />
@@ -39,7 +48,7 @@ export default function BlogPage() {
         
         const { data, error } = await supabase
           .from('korefi_blog')
-          .select('id, created_at, Name, slug, Description')
+          .select('id, created_at, Name, slug, Description, Image')
           .order('created_at', { ascending: false })
 
         console.log('[v0] Supabase response - data:', data)
@@ -116,6 +125,15 @@ export default function BlogPage() {
                   className="block py-8 border-b transition-colors duration-200 hover:bg-[#F3F2EC] -mx-4 px-4 rounded-lg"
                   style={{ borderColor: index === posts.length - 1 ? 'transparent' : '#E0DED6' }}
                 >
+                  <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg">
+                    <Image
+                      src={getBlogImageUrl(post)}
+                      alt={post.Name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 720px"
+                    />
+                  </div>
                   <time
                     className="text-[13px] font-medium"
                     style={{ color: '#9a9488' }}

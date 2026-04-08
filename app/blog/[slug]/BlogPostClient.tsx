@@ -1,9 +1,17 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
+
+function getBlogImageUrl(post: BlogPost): string {
+  if (post.Image && post.Image.trim() !== '') {
+    return post.Image
+  }
+  return `/api/og?title=${encodeURIComponent(post.Name)}`
+}
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -51,28 +59,47 @@ export default function BlogPostClient({ post }: Props) {
             Back to Blog
           </Link>
 
-          {/* Header */}
+          {/* Header - Two Column Layout */}
           <header className="mb-10">
-            <time
-              className="text-[14px] font-medium"
-              style={{ color: '#9a9488' }}
-            >
-              {formatDate(post.created_at)}
-            </time>
-            <h1
-              className="font-serif text-[38px] md:text-[46px] font-medium mt-3"
-              style={{ color: '#111110', lineHeight: 1.15 }}
-            >
-              {post.Name}
-            </h1>
-            {post.Description && (
-              <p
-                className="text-[18px] mt-4"
-                style={{ color: '#5a5a54', lineHeight: 1.6 }}
-              >
-                {post.Description}
-              </p>
-            )}
+            <div className="flex flex-col-reverse md:flex-row md:gap-10 md:items-start">
+              {/* Left Column - Title and Meta */}
+              <div className="flex-1 mt-6 md:mt-0">
+                <time
+                  className="text-[14px] font-medium"
+                  style={{ color: '#9a9488' }}
+                >
+                  {formatDate(post.created_at)}
+                </time>
+                <h1
+                  className="font-serif text-[32px] md:text-[42px] font-medium mt-3"
+                  style={{ color: '#111110', lineHeight: 1.15 }}
+                >
+                  {post.Name}
+                </h1>
+                {post.Description && (
+                  <p
+                    className="text-[17px] mt-4"
+                    style={{ color: '#5a5a54', lineHeight: 1.6 }}
+                  >
+                    {post.Description}
+                  </p>
+                )}
+              </div>
+              
+              {/* Right Column - Image */}
+              <div className="w-full md:w-[340px] flex-shrink-0">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-md">
+                  <Image
+                    src={getBlogImageUrl(post)}
+                    alt={post.Name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 340px"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
           </header>
 
           {/* Divider */}
