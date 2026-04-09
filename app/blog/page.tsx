@@ -36,12 +36,14 @@ function BlogCardImage({ src, alt }: { src: string; alt: string }) {
           style={{ animation: 'shimmer 1.5s infinite' }} 
         />
       </div>
-      <img
+      <Image
         src={src}
         alt={alt}
-        className={`w-full h-full object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className={`object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setIsLoaded(true)}
-        loading="lazy"
+        quality={75}
       />
     </div>
   )
