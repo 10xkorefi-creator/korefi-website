@@ -57,13 +57,6 @@ function balanceLines(title: string): string[] {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || 'Korefi Blog'
-  const size = searchParams.get('size') || 'full' // 'full' (1200x630) or 'thumb' (600x315)
-
-  const isThumb = size === 'thumb'
-  const width = isThumb ? 600 : 1200
-  const height = isThumb ? 315 : 630
-  const fontSize = isThumb ? 36 : 72
-  const padding = isThumb ? 40 : 80
 
   const balancedLines = balanceLines(title)
 
@@ -88,7 +81,7 @@ export async function GET(request: NextRequest) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: `${padding}px`,
+          padding: '80px',
           backgroundImage: 'url(https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bg-new.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -102,14 +95,12 @@ export async function GET(request: NextRequest) {
             justifyContent: 'center',
             textAlign: 'center',
             color: 'white',
-            fontSize: `${fontSize}px`,
+            fontSize: '72px',
             fontWeight: 500,
             fontFamily: fontData ? "'Outfit', sans-serif" : 'sans-serif',
             letterSpacing: '-1px',
             lineHeight: 1.2,
-            textShadow: isThumb 
-              ? '0 0 20px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.8)'
-              : '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
+            textShadow: '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(100,100,255,0.1), 0 4px 12px rgba(0,0,0,0.8)',
             maxWidth: '100%',
           }}
         >
@@ -122,8 +113,8 @@ export async function GET(request: NextRequest) {
       </div>
     ),
     {
-      width,
-      height,
+      width: 1200,
+      height: 630,
       fonts: fontData
         ? [
             {
