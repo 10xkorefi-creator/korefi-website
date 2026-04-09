@@ -33,7 +33,7 @@ export function Footer() {
             </a>
 
             {/* Meta Text */}
-            <div className="space-y-1.5 text-[13px] text-[#888884]">
+            <div className="space-y-1.5 text-[13px] text-[#C4C4BE]">
 
               <p><span style={{ color: '#C4C4BE' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
               <p className="pt-2">
