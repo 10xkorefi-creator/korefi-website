@@ -34,7 +34,8 @@ export function Footer() {
 
             {/* Meta Text */}
             <div className="space-y-1.5 text-[13px] text-[#444440]">
-              <p>30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
+
+              <p><span style={{ color: '#666660' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
               <p className="pt-2">
                 <a href="mailto:support@korefi.ai" className="hover:text-korefi-text-muted transition-colors">
                   support@korefi.ai
