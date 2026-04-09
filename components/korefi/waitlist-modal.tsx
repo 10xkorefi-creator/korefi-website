@@ -305,16 +305,6 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                       </div>
                     </div>
 
-                    {/* Textarea */}
-                    <div className="mb-6">
-                      <label className={labelClasses}>Anything specific you'd like us to look at? (optional)</label>
-                      <textarea
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        className={`${inputClasses} min-h-[80px] resize-none`}
-                        placeholder="e.g. we use DoorDash heavily and suspect we're missing delivery-related deductions..."
-                      />
-                    </div>
 
                     {/* Form Footer */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4">
