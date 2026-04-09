@@ -27,30 +27,23 @@ function BlogCardImage({ src, alt }: { src: string; alt: string }) {
   const [isLoaded, setIsLoaded] = useState(false)
   
   return (
-    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#1a1a3e' }}>
-      {/* Blurry placeholder - mimics the OG image style */}
+    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
+      {/* Blur placeholder */}
       <div 
-        className={`absolute inset-0 transition-opacity duration-700 ease-out ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
-        style={{
-          background: 'linear-gradient(135deg, #00008d 0%, #000020 50%, #0a0a2e 100%)',
-          filter: 'blur(0px)',
-        }}
+        className={`absolute inset-0 bg-gradient-to-br from-[#E8E6DE] to-[#D4D2CA] transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
       >
-        {/* Subtle animated glow effect */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(circle at 30% 40%, rgba(100, 149, 237, 0.4) 0%, transparent 50%)',
-            animation: 'pulse 2s ease-in-out infinite',
-          }}
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent" 
+          style={{ animation: 'shimmer 1.5s infinite' }} 
         />
       </div>
-      <img
+      <Image
         src={src}
         alt={alt}
-        className={`w-full h-full object-cover transition-all duration-700 ease-out ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className={`object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setIsLoaded(true)}
-        loading="lazy"
+        quality={75}
       />
     </div>
   )

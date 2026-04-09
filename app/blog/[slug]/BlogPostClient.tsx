@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
@@ -20,37 +19,6 @@ function formatDate(dateString: string): string {
     month: 'long',
     day: 'numeric',
   })
-}
-
-function BlogPostImage({ src, alt }: { src: string; alt: string }) {
-  const [isLoaded, setIsLoaded] = useState(false)
-  
-  return (
-    <div className="relative w-full h-full overflow-hidden rounded-[10px] shadow-md" style={{ backgroundColor: '#1a1a3e' }}>
-      {/* Blurry placeholder - mimics the OG image style */}
-      <div 
-        className={`absolute inset-0 transition-opacity duration-700 ease-out ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
-        style={{
-          background: 'linear-gradient(135deg, #00008d 0%, #000020 50%, #0a0a2e 100%)',
-        }}
-      >
-        {/* Subtle animated glow effect */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(circle at 30% 40%, rgba(100, 149, 237, 0.4) 0%, transparent 50%)',
-            animation: 'pulse 2s ease-in-out infinite',
-          }}
-        />
-      </div>
-      <img
-        src={src}
-        alt={alt}
-        className={`w-full h-full object-cover object-center transition-all duration-700 ease-out ${isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
-        onLoad={() => setIsLoaded(true)}
-      />
-    </div>
-  )
 }
 
 interface Props {
@@ -117,7 +85,13 @@ export default function BlogPostClient({ post }: Props) {
             
             {/* Right Column - Image (2/5 = 40%) */}
             <div className="w-full md:w-2/5 order-1 md:order-2">
-              <BlogPostImage src={getBlogImageUrl(post)} alt={post.Name} />
+              <div className="w-full h-full overflow-hidden rounded-[10px] shadow-md">
+                <img
+                  src={getBlogImageUrl(post)}
+                  alt={post.Name}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
             </div>
           </div>
         </header>

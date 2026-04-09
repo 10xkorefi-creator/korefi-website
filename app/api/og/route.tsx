@@ -3,6 +3,22 @@ import { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
+const backgrounds = [
+  'https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bg-new.png',
+  'https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bgpurple.png',
+  'https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bgred.png',
+]
+
+// Simple hash function to deterministically pick a background based on title
+function hashTitle(title: string): number {
+  let hash = 0
+  for (let i = 0; i < title.length; i++) {
+    hash = ((hash << 5) - hash) + title.charCodeAt(i)
+    hash = hash & hash // Convert to 32-bit integer
+  }
+  return Math.abs(hash)
+}
+
 function balanceLines(title: string): string[] {
   const words = title.split(/\s+/).filter(w => w.length > 0)
   
@@ -57,6 +73,13 @@ function balanceLines(title: string): string[] {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || 'Korefi Blog'
+  const bgParam = searchParams.get('bg')
+
+  // Select background: use bg param if provided (0, 1, 2), otherwise hash the title
+  const bgIndex = bgParam !== null && ['0', '1', '2'].includes(bgParam)
+    ? parseInt(bgParam, 10)
+    : hashTitle(title) % backgrounds.length
+  const backgroundUrl = backgrounds[bgIndex]
 
   const balancedLines = balanceLines(title)
 
@@ -82,7 +105,7 @@ export async function GET(request: NextRequest) {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '80px',
-          backgroundImage: 'url(https://qbwknhtreuhxciwcktld.supabase.co/storage/v1/object/public/korefi-blog-img/bg-new.png)',
+          backgroundImage: `url(${backgroundUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
