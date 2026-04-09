@@ -75,7 +75,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     
     if (!error && posts) {
       blogPages = posts.map((post) => ({
-        url: `${BASE_URL}/blog/${post.slug}`,
+        // Encode special characters in slug (e.g., & -> %26) for valid XML
+        url: `${BASE_URL}/blog/${encodeURIComponent(post.slug)}`,
         lastModified: post.created_at,
         changeFrequency: 'weekly',
         priority: 0.7,
