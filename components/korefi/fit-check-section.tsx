@@ -111,7 +111,7 @@ export function FitCheckSection() {
                   borderLeftColor: '#333330'
                 }}
               >
-                <p className="text-[13px] text-[#888884] leading-[1.6]">
+                <p className="text-[13px] text-[#C4C4BE] leading-[1.6]">
                   If you want a DIY tool or a cheaper way to file, Korefi is not that. Built for owners
                   who want results, not more software to manage.
                 </p>
