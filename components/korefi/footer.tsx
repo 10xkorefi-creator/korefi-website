@@ -33,7 +33,7 @@ export function Footer() {
             </a>
 
             {/* Meta Text */}
-            <div className="space-y-1.5 text-[13px] text-[#444440]">
+            <div className="space-y-1.5 text-[13px] text-[#888884]">
 
               <p><span style={{ color: '#666660' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
               <p className="pt-2">
@@ -86,7 +86,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-korefi-border-dark pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[13px] text-[#444440]">
+        <div className="border-t border-korefi-border-dark pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[13px] text-[#888884]">
           <span>© 2026 KoreFi. All rights reserved.</span>
           <div className="flex items-center gap-6">
             <a href="https://docs.google.com/document/d/1X3SPTwhKYueonOYhFlqr_6SwPiinj8Pc/preview" target="_blank" rel="noopener noreferrer" className="hover:text-korefi-text-muted transition-colors">
