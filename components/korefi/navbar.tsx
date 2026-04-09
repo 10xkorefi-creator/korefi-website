@@ -34,7 +34,7 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[6px]">
               <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
             </span>
-            <span className="relative z-10">Join the waitlist</span>
+            <span className="relative z-10">Talk to an Expert</span>
           </button>
         ) : (
           <a
@@ -44,7 +44,7 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[6px]">
               <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
             </span>
-            <span className="relative z-10">Join the waitlist</span>
+            <span className="relative z-10">Talk to an Expert</span>
           </a>
         )}
       </div>
