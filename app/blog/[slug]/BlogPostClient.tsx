@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
+import { WaitlistModal } from '@/components/korefi/waitlist-modal'
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -19,11 +21,13 @@ interface Props {
 }
 
 export default function BlogPostClient({ post }: Props) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const richText = post['rich - text'] || ''
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#FAFAF7' }}>
-      <Navbar />
+      <Navbar onOpenModal={() => setIsModalOpen(true)} />
+      <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       
       <article className="pt-32 pb-20 px-6">
         {/* Header - Two Column Layout */}

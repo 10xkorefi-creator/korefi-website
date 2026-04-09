@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { supabase, BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
+import { WaitlistModal } from '@/components/korefi/waitlist-modal'
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -58,6 +59,7 @@ export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchPosts() {
@@ -81,7 +83,8 @@ export default function BlogPage() {
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#FAFAF7' }}>
-      <Navbar />
+      <Navbar onOpenModal={() => setIsModalOpen(true)} />
+      <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       
       <div className="pt-32 pb-20 px-6">
         <div className="max-w-[1200px] mx-auto">

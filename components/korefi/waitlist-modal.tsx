@@ -305,16 +305,6 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                       </div>
                     </div>
 
-                    {/* Textarea */}
-                    <div className="mb-6">
-                      <label className={labelClasses}>Anything specific you'd like us to look at? (optional)</label>
-                      <textarea
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        className={`${inputClasses} min-h-[80px] resize-none`}
-                        placeholder="e.g. we use DoorDash heavily and suspect we're missing delivery-related deductions..."
-                      />
-                    </div>
 
                     {/* Form Footer */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4">
@@ -354,7 +344,7 @@ export function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                             <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[10px]">
                               <span className="absolute top-0 -left-full w-[60%] h-full transition-none group-hover:transition-[left] group-hover:duration-600 group-hover:ease-out group-hover:left-[150%]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }} />
                             </span>
-                            <span className="relative z-10">Join the waitlist</span>
+                            <span className="relative z-10">Talk to an Expert</span>
                           </>
                         )}
                       </button>

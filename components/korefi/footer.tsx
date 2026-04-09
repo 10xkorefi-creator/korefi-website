@@ -33,8 +33,9 @@ export function Footer() {
             </a>
 
             {/* Meta Text */}
-            <div className="space-y-1.5 text-[13px] text-[#444440]">
-              <p>30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
+            <div className="space-y-1.5 text-[13px] text-[#C4C4BE]">
+
+              <p><span style={{ color: '#C4C4BE' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
               <p className="pt-2">
                 <a href="mailto:support@korefi.ai" className="hover:text-korefi-text-muted transition-colors">
                   support@korefi.ai
@@ -53,7 +54,7 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {serviceLinks.map((link) => (
                   <li key={link.label}>
-                    <span className="text-[14px] text-[#666660]">
+                    <span className="text-[14px] text-[#9a9a94]">
                       {link.label}
                     </span>
                   </li>
@@ -73,7 +74,7 @@ export function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-[14px] text-[#666660] hover:text-korefi-text-muted transition-colors"
+                      className="text-[14px] text-[#9a9a94] hover:text-korefi-text-muted transition-colors"
                     >
                       {link.label}
                     </a>
@@ -85,7 +86,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-korefi-border-dark pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[13px] text-[#444440]">
+        <div className="border-t border-korefi-border-dark pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[13px] text-[#888884]">
           <span>© 2026 KoreFi. All rights reserved.</span>
           <div className="flex items-center gap-6">
             <a href="https://docs.google.com/document/d/1X3SPTwhKYueonOYhFlqr_6SwPiinj8Pc/preview" target="_blank" rel="noopener noreferrer" className="hover:text-korefi-text-muted transition-colors">
