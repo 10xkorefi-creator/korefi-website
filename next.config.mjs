@@ -4,7 +4,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      { protocol: 'https', hostname: 'www.korefi.ai' },
+      { protocol: 'https', hostname: 'korefi.ai' },
+      { protocol: 'https', hostname: 'qbwknhtreuhxciwcktld.supabase.co' },
+    ],
   },
 }
 
