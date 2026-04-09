@@ -7,13 +7,6 @@ import { supabase, BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
 
-function getBlogImageUrl(post: BlogPost): string {
-  if (post.Image && post.Image.trim() !== '') {
-    return post.Image
-  }
-  return `/api/og?title=${encodeURIComponent(post.Name)}`
-}
-
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
@@ -139,7 +132,7 @@ export default function BlogPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => {
-                const imageUrl = getBlogImageUrl(post)
+                const imageUrl = post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`
                 return (
                 <Link
                   key={post.id}

@@ -5,13 +5,6 @@ import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
 
-function getBlogImageUrl(post: BlogPost): string {
-  if (post.Image && post.Image.trim() !== '') {
-    return post.Image
-  }
-  return `/api/og?title=${encodeURIComponent(post.Name)}`
-}
-
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
@@ -87,7 +80,7 @@ export default function BlogPostClient({ post }: Props) {
             <div className="w-full md:w-2/5 order-1 md:order-2">
               <div className="w-full h-full overflow-hidden rounded-[10px] shadow-md">
                 <img
-                  src={getBlogImageUrl(post)}
+                  src={post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`}
                   alt={post.Name}
                   className="w-full h-full object-cover object-center"
                 />
