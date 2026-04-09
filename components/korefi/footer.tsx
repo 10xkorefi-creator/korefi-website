@@ -35,7 +35,7 @@ export function Footer() {
             {/* Meta Text */}
             <div className="space-y-1.5 text-[13px] text-[#888884]">
 
-              <p><span style={{ color: '#666660' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
+              <p><span style={{ color: '#9a9a94' }}>Regd. Address:</span> 30 N Gould St, Ste R, Sheridan, WY 82801, USA</p>
               <p className="pt-2">
                 <a href="mailto:support@korefi.ai" className="hover:text-korefi-text-muted transition-colors">
                   support@korefi.ai
@@ -54,7 +54,7 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {serviceLinks.map((link) => (
                   <li key={link.label}>
-                    <span className="text-[14px] text-[#666660]">
+                    <span className="text-[14px] text-[#9a9a94]">
                       {link.label}
                     </span>
                   </li>
@@ -74,7 +74,7 @@ export function Footer() {
                       href={link.href}
                       target={link.href.startsWith('http') ? '_blank' : undefined}
                       rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="text-[14px] text-[#666660] hover:text-korefi-text-muted transition-colors"
+                      className="text-[14px] text-[#9a9a94] hover:text-korefi-text-muted transition-colors"
                     >
                       {link.label}
                     </a>
