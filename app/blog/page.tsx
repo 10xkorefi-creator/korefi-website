@@ -7,11 +7,16 @@ import { supabase, BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
 
-function getBlogImageUrl(post: BlogPost): string {
+function getBlogImageUrl(post: BlogPost, size: 'full' | 'thumb' = 'full'): string {
   if (post.Image && post.Image.trim() !== '') {
+    // If image is from OG API, append size param
+    if (post.Image.includes('/api/og')) {
+      const separator = post.Image.includes('?') ? '&' : '?'
+      return `${post.Image}${separator}size=${size}`
+    }
     return post.Image
   }
-  return `/api/og?title=${encodeURIComponent(post.Name)}`
+  return `/api/og?title=${encodeURIComponent(post.Name)}&size=${size}`
 }
 
 function formatDate(dateString: string): string {
@@ -137,7 +142,7 @@ export default function BlogPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => {
-                const imageUrl = getBlogImageUrl(post)
+                const imageUrl = getBlogImageUrl(post, 'thumb')
                 return (
                 <Link
                   key={post.id}
