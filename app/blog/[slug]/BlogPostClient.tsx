@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { BlogPost } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
@@ -82,11 +83,15 @@ export default function BlogPostClient({ post }: Props) {
             
             {/* Right Column - Image (2/5 = 40%) */}
             <div className="w-full md:w-2/5 order-1 md:order-2">
-              <div className="w-full h-full overflow-hidden rounded-[10px] shadow-md">
-                <img
+              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[10px] shadow-md">
+                <Image
                   src={post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`}
                   alt={post.Name}
-                  className="w-full h-full object-cover object-center"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  className="object-cover object-center"
+                  priority
+                  quality={85}
                 />
               </div>
             </div>
