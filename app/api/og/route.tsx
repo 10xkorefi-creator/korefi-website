@@ -19,52 +19,64 @@ function hashTitle(title: string): number {
   return Math.abs(hash)
 }
 
+// Count visual words: hyphenated words count as 2 visual words
+function countVisualWords(word: string): number {
+  return word.includes('-') ? 2 : 1
+}
+
 function balanceLines(title: string): string[] {
-  const words = title.split(/\s+/).filter(w => w.length > 0)
+  let words = title.split(/\s+/).filter(w => w.length > 0)
   
-  // If 3 or fewer words, render as one line
-  if (words.length <= 3) {
+  // Safety check: truncate to first 6 words if title exceeds 6 words
+  if (words.length > 6) {
+    words = words.slice(0, 6)
+    words[5] = words[5] + '...'
+  }
+  
+  // Count total visual words
+  const totalVisualWords = words.reduce((sum, w) => sum + countVisualWords(w), 0)
+  
+  // If 3 or fewer visual words, render as single line
+  if (totalVisualWords <= 3) {
     return [words.join(' ')]
   }
   
-  // For longer titles, split into balanced lines where each line has at least 2 words
-  const totalWords = words.length
+  // Build lines with max 3 visual words per line
+  const lines: string[] = []
+  let currentLine: string[] = []
+  let currentVisualCount = 0
   
-  // Calculate ideal split point to avoid orphan (single word on last line)
-  // If odd number of words, put more on first line
-  const midpoint = Math.ceil(totalWords / 2)
-  
-  // Ensure last line has at least 2 words
-  let splitPoint = midpoint
-  if (totalWords - midpoint < 2) {
-    splitPoint = totalWords - 2
+  for (const word of words) {
+    const wordVisualCount = countVisualWords(word)
+    
+    // If adding this word would exceed 3 visual words, start a new line
+    if (currentVisualCount + wordVisualCount > 3 && currentLine.length > 0) {
+      lines.push(currentLine.join(' '))
+      currentLine = []
+      currentVisualCount = 0
+    }
+    
+    currentLine.push(word)
+    currentVisualCount += wordVisualCount
   }
   
-  const lines: string[] = []
+  // Add remaining words as last line
+  if (currentLine.length > 0) {
+    lines.push(currentLine.join(' '))
+  }
   
-  if (totalWords <= 6) {
-    // For short-medium titles, split into 2 lines
-    lines.push(words.slice(0, splitPoint).join(' '))
-    lines.push(words.slice(splitPoint).join(' '))
-  } else {
-    // For longer titles, split into 3 lines
-    const thirdPoint = Math.ceil(totalWords / 3)
-    const twoThirdPoint = Math.ceil((totalWords * 2) / 3)
-    
-    // Adjust to ensure no line has fewer than 2 words
-    let firstSplit = thirdPoint
-    let secondSplit = twoThirdPoint
-    
-    if (totalWords - secondSplit < 2) {
-      secondSplit = totalWords - 2
+  // Orphan prevention: if last line has only 1 word, pull one from previous line
+  if (lines.length > 1) {
+    const lastLineWords = lines[lines.length - 1].split(/\s+/)
+    if (lastLineWords.length === 1) {
+      const prevLineWords = lines[lines.length - 2].split(/\s+/)
+      if (prevLineWords.length > 1) {
+        // Move last word of previous line to start of last line
+        const wordToMove = prevLineWords.pop()!
+        lines[lines.length - 2] = prevLineWords.join(' ')
+        lines[lines.length - 1] = wordToMove + ' ' + lastLineWords[0]
+      }
     }
-    if (secondSplit - firstSplit < 2) {
-      firstSplit = Math.max(2, secondSplit - 2)
-    }
-    
-    lines.push(words.slice(0, firstSplit).join(' '))
-    lines.push(words.slice(firstSplit, secondSplit).join(' '))
-    lines.push(words.slice(secondSplit).join(' '))
   }
   
   return lines.filter(line => line.length > 0)
