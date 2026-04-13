@@ -205,12 +205,12 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <WaitlistModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       
-      <article className="pt-32 pb-20 px-4 md:px-6">
+      <article className="pt-24 pb-16 px-4 md:px-6">
         {/* Header - Two Column Layout */}
-        <header className="max-w-[720px] lg:max-w-[980px] mx-auto mb-10">
+        <header className="max-w-[720px] lg:max-w-[980px] mx-auto mb-8">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
+            className="inline-flex items-center gap-2 text-[14px] font-medium mb-4 transition-colors hover:opacity-70"
             style={{ color: '#314dd0' }}
           >
             <svg
@@ -314,7 +314,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
 
             {/* Divider */}
             <div
-              className="h-[1px] mb-10"
+              className="h-[1px] mb-8"
               style={{ backgroundColor: '#E0DED6' }}
             />
 
@@ -331,7 +331,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[720px] lg:max-w-[980px] mx-auto mt-16">
+          <section className="max-w-[720px] lg:max-w-[980px] mx-auto mt-12">
             <h2 
               className="font-serif text-[24px] font-medium mb-6"
               style={{ color: '#111110' }}
