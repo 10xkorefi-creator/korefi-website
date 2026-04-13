@@ -19,6 +19,127 @@ function formatDate(dateString: string): string {
 
 const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
 
+// Generate a slug ID from heading text
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim()
+}
+
+// Headings to exclude from ToC
+const EXCLUDED_HEADINGS = ['key takeaways', 'faq']
+
+interface TocItem {
+  id: string
+  text: string
+  level: 2 | 3
+}
+
+// Parse headings from HTML and build ToC structure
+function parseHeadings(html: string): TocItem[] {
+  const headingRegex = /<h([23])[^>]*>(.*?)<\/h[23]>/gi
+  const items: TocItem[] = []
+  let match
+
+  while ((match = headingRegex.exec(html)) !== null) {
+    const level = parseInt(match[1]) as 2 | 3
+    const text = match[2].replace(/<[^>]*>/g, '').trim()
+    
+    if (EXCLUDED_HEADINGS.includes(text.toLowerCase())) {
+      continue
+    }
+    
+    const id = generateSlug(text)
+    items.push({ id, text, level })
+  }
+
+  return items
+}
+
+// Inject IDs into headings in HTML content
+function injectHeadingIds(html: string): string {
+  return html.replace(/<h([23])([^>]*)>(.*?)<\/h([23])>/gi, (match, level, attrs, content) => {
+    const text = content.replace(/<[^>]*>/g, '').trim()
+    const id = generateSlug(text)
+    if (attrs.includes('id=')) {
+      return match
+    }
+    return `<h${level}${attrs} id="${id}">${content}</h${level}>`
+  })
+}
+
+// Table of Contents component
+function TableOfContents({ items }: { items: TocItem[] }) {
+  if (items.length === 0) return null
+
+  const groupedItems: { h2: TocItem; h3s: TocItem[] }[] = []
+  let currentGroup: { h2: TocItem; h3s: TocItem[] } | null = null
+
+  for (const item of items) {
+    if (item.level === 2) {
+      if (currentGroup) {
+        groupedItems.push(currentGroup)
+      }
+      currentGroup = { h2: item, h3s: [] }
+    } else if (item.level === 3 && currentGroup) {
+      currentGroup.h3s.push(item)
+    }
+  }
+  if (currentGroup) {
+    groupedItems.push(currentGroup)
+  }
+
+  return (
+    <nav 
+      aria-label="Table of Contents"
+      className="p-5 rounded-lg mb-8"
+      style={{ backgroundColor: '#F3F2EC', border: '1px solid #E0DED6' }}
+    >
+      <span 
+        className="block text-[13px] font-medium mb-3"
+        style={{ color: '#9a9488' }}
+      >
+        In this article
+      </span>
+      <ol className="list-decimal list-inside space-y-2">
+        {groupedItems.map((group) => (
+          <li key={group.h2.id} className="text-[14px]" style={{ color: '#111110' }}>
+            <a 
+              href={`#${group.h2.id}`}
+              className="hover:underline underline-offset-2"
+              style={{ color: '#111110' }}
+            >
+              {group.h2.text}
+            </a>
+            {group.h3s.length > 0 && (
+              <ol className="list-decimal list-inside mt-2 ml-5 space-y-1">
+                {group.h3s.map((h3) => (
+                  <li 
+                    key={h3.id} 
+                    className="text-[13px]"
+                    style={{ color: '#5a5a54' }}
+                  >
+                    <a 
+                      href={`#${h3.id}`}
+                      className="hover:underline underline-offset-2"
+                      style={{ color: '#5a5a54' }}
+                    >
+                      {h3.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
 interface Props {
   post: BlogPost
   relatedPosts: BlogPost[]
@@ -27,6 +148,10 @@ interface Props {
 export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const richText = post['rich - text'] || ''
+  
+  // Parse headings for ToC and inject IDs into content
+  const tocItems = parseHeadings(richText)
+  const contentWithIds = injectHeadingIds(richText)
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#FAFAF7' }}>
@@ -105,6 +230,41 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
         </header>
 
         <div className="max-w-[960px] mx-auto">
+          {/* Author Card - Minimal */}
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="w-[36px] h-[36px] rounded-full overflow-hidden flex-shrink-0"
+              style={{ border: '1px solid #E0DED6' }}
+            >
+              <img
+                src="/Vijay.png"
+                alt="Vijay Lohchab"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[13px] font-medium" style={{ color: '#111110' }}>
+                Vijay Lohchab
+              </span>
+              <span className="text-[13px]" style={{ color: '#9a9488' }}>
+                Founding member, Korefi
+              </span>
+              <a 
+                href="https://www.linkedin.com/in/vijay-lohchab/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hover:opacity-70 transition-opacity ml-1"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Table of Contents */}
+          <TableOfContents items={tocItems} />
+
           {/* Divider */}
           <div
             className="h-[1px] mb-10"
@@ -114,48 +274,8 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
           {/* Content */}
           <div
             className="blog-content"
-            dangerouslySetInnerHTML={{ __html: richText }}
+            dangerouslySetInnerHTML={{ __html: contentWithIds }}
           />
-
-          {/* Divider */}
-          <div
-            className="h-[1px] my-10"
-            style={{ backgroundColor: '#E0DED6' }}
-          />
-
-          {/* Author Card */}
-          <div className="flex items-center gap-3">
-            <div
-              className="w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0"
-              style={{ border: '1px solid #E0DED6' }}
-            >
-              <img
-                src="/Vijay.png"
-                alt="Vijay Lohchab"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-[14px] font-medium" style={{ color: '#111110' }}>
-                  Vijay Lohchab
-                </span>
-                <a 
-                  href="https://www.linkedin.com/in/vijay-lohchab/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="hover:opacity-70 transition-opacity"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                  </svg>
-                </a>
-              </div>
-              <span className="text-[12px]" style={{ color: '#9a9488' }}>
-                Founding member, Korefi
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Related Posts Section */}
@@ -222,6 +342,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
           color: #111110;
           margin-top: 48px;
           margin-bottom: 20px;
+          scroll-margin-top: 100px;
         }
 
         .blog-content h3 {
@@ -232,6 +353,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
           color: #111110;
           margin-top: 36px;
           margin-bottom: 16px;
+          scroll-margin-top: 100px;
         }
 
         .blog-content h4 {
