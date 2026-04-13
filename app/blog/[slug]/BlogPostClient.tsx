@@ -71,7 +71,7 @@ function injectHeadingIds(html: string): string {
   })
 }
 
-// Table of Contents component
+// Table of Contents component - Sticky sidebar version
 function TableOfContents({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null
 
@@ -95,47 +95,42 @@ function TableOfContents({ items }: { items: TocItem[] }) {
   return (
     <nav 
       aria-label="Table of Contents"
-      className="p-5 rounded-lg mb-8"
-      style={{ backgroundColor: '#F3F2EC', border: '1px solid #E0DED6' }}
+      className="hidden xl:block sticky top-28 w-[240px] flex-shrink-0"
     >
       <span 
-        className="block text-[13px] font-medium mb-3"
+        className="block font-sans text-[12px] font-medium uppercase tracking-wide mb-4"
         style={{ color: '#9a9488' }}
       >
         In this article
       </span>
-      <ol className="list-decimal list-inside space-y-2">
+      <ul className="space-y-2 border-l" style={{ borderColor: '#E0DED6' }}>
         {groupedItems.map((group) => (
-          <li key={group.h2.id} className="text-[14px]" style={{ color: '#111110' }}>
+          <li key={group.h2.id}>
             <a 
               href={`#${group.h2.id}`}
-              className="hover:underline underline-offset-2"
-              style={{ color: '#111110' }}
+              className="block pl-4 py-1 font-sans text-[13px] leading-snug transition-colors hover:text-[#314dd0]"
+              style={{ color: '#5a5a54' }}
             >
               {group.h2.text}
             </a>
             {group.h3s.length > 0 && (
-              <ol className="list-decimal list-inside mt-2 ml-5 space-y-1">
+              <ul className="space-y-1 mt-1">
                 {group.h3s.map((h3) => (
-                  <li 
-                    key={h3.id} 
-                    className="text-[13px]"
-                    style={{ color: '#5a5a54' }}
-                  >
+                  <li key={h3.id}>
                     <a 
                       href={`#${h3.id}`}
-                      className="hover:underline underline-offset-2"
-                      style={{ color: '#5a5a54' }}
+                      className="block pl-8 py-1 font-sans text-[12px] leading-snug transition-colors hover:text-[#314dd0]"
+                      style={{ color: '#9a9488' }}
                     >
                       {h3.text}
                     </a>
                   </li>
                 ))}
-              </ol>
+              </ul>
             )}
           </li>
         ))}
-      </ol>
+      </ul>
     </nav>
   )
 }
@@ -160,7 +155,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
       
       <article className="pt-32 pb-20 px-6">
         {/* Header - Two Column Layout */}
-        <header className="max-w-[960px] mx-auto mb-10">
+        <header className="max-w-[1200px] mx-auto mb-10">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
@@ -229,58 +224,62 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
           </div>
         </header>
 
-        <div className="max-w-[960px] mx-auto">
-          {/* Author Card - Minimal */}
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="w-[36px] h-[36px] rounded-full overflow-hidden flex-shrink-0"
-              style={{ border: '1px solid #E0DED6' }}
-            >
-              <img
-                src="/Vijay.png"
-                alt="Vijay Lohchab"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[13px] font-medium" style={{ color: '#111110' }}>
-                Vijay Lohchab
-              </span>
-              <span className="text-[13px]" style={{ color: '#9a9488' }}>
-                Founding member, Korefi
-              </span>
-              <a 
-                href="https://www.linkedin.com/in/vijay-lohchab/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="hover:opacity-70 transition-opacity ml-1"
+        {/* Two Column Layout: Content + Sticky ToC */}
+        <div className="max-w-[1200px] mx-auto flex gap-12">
+          {/* Main Content Column */}
+          <div className="flex-1 max-w-[720px]">
+            {/* Author Card - Minimal */}
+            <div className="flex items-center gap-3 mb-6">
+              <div
+                className="w-[36px] h-[36px] rounded-full overflow-hidden flex-shrink-0"
+                style={{ border: '1px solid #E0DED6' }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-              </a>
+                <img
+                  src="/Vijay.png"
+                  alt="Vijay Lohchab"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[13px] font-medium" style={{ color: '#111110' }}>
+                  Vijay Lohchab
+                </span>
+                <span className="text-[13px]" style={{ color: '#9a9488' }}>
+                  Founding member, Korefi
+                </span>
+                <a 
+                  href="https://www.linkedin.com/in/vijay-lohchab/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:opacity-70 transition-opacity ml-1"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </a>
+              </div>
             </div>
+
+            {/* Divider */}
+            <div
+              className="h-[1px] mb-10"
+              style={{ backgroundColor: '#E0DED6' }}
+            />
+
+            {/* Content */}
+            <div
+              className="blog-content"
+              dangerouslySetInnerHTML={{ __html: contentWithIds }}
+            />
           </div>
 
-          {/* Table of Contents */}
+          {/* Sticky Table of Contents - Right Side */}
           <TableOfContents items={tocItems} />
-
-          {/* Divider */}
-          <div
-            className="h-[1px] mb-10"
-            style={{ backgroundColor: '#E0DED6' }}
-          />
-
-          {/* Content */}
-          <div
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: contentWithIds }}
-          />
         </div>
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[960px] mx-auto mt-16">
+          <section className="max-w-[1200px] mx-auto mt-16">
             <h2 
               className="font-serif text-[24px] font-medium mb-6"
               style={{ color: '#111110' }}
