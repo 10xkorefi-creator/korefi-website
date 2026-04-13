@@ -21,9 +21,10 @@ const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAY
 
 interface Props {
   post: BlogPost
+  relatedPosts: BlogPost[]
 }
 
-export default function BlogPostClient({ post }: Props) {
+export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const richText = post['rich - text'] || ''
 
@@ -104,8 +105,26 @@ export default function BlogPostClient({ post }: Props) {
         </header>
 
         <div className="max-w-[960px] mx-auto">
+          {/* Divider */}
+          <div
+            className="h-[1px] mb-10"
+            style={{ backgroundColor: '#E0DED6' }}
+          />
+
+          {/* Content */}
+          <div
+            className="blog-content"
+            dangerouslySetInnerHTML={{ __html: richText }}
+          />
+
+          {/* Divider */}
+          <div
+            className="h-[1px] my-10"
+            style={{ backgroundColor: '#E0DED6' }}
+          />
+
           {/* Author Card */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3">
             <div
               className="w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0"
               style={{ border: '1px solid #E0DED6' }}
@@ -137,19 +156,52 @@ export default function BlogPostClient({ post }: Props) {
               </span>
             </div>
           </div>
-
-          {/* Divider */}
-          <div
-            className="h-[1px] mb-10"
-            style={{ backgroundColor: '#E0DED6' }}
-          />
-
-          {/* Content */}
-          <div
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: richText }}
-          />
         </div>
+
+        {/* Related Posts Section */}
+        {relatedPosts.length > 0 && (
+          <section className="max-w-[960px] mx-auto mt-16">
+            <h2 
+              className="font-serif text-[24px] font-medium mb-6"
+              style={{ color: '#111110' }}
+            >
+              Related Articles
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedPosts.map((relatedPost) => (
+                <Link
+                  key={relatedPost.id}
+                  href={`/blog/${relatedPost.slug}`}
+                  className="block p-4 rounded-lg border transition-colors hover:bg-[#F3F2EC]"
+                  style={{ borderColor: '#E0DED6' }}
+                >
+                  <div className="relative aspect-video w-full mb-3 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
+                    <Image
+                      src={relatedPost.Image || `/api/og?title=${encodeURIComponent(relatedPost.Name)}`}
+                      alt={relatedPost.Name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      quality={75}
+                    />
+                  </div>
+                  <time
+                    className="text-[12px] font-medium"
+                    style={{ color: '#9a9488' }}
+                  >
+                    {formatDate(relatedPost.created_at)}
+                  </time>
+                  <h3
+                    className="font-serif text-[16px] font-medium mt-1 line-clamp-2"
+                    style={{ color: '#111110', lineHeight: 1.3 }}
+                  >
+                    {relatedPost.Name}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
 
       <Footer />
