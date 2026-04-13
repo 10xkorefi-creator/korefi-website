@@ -75,63 +75,38 @@ function injectHeadingIds(html: string): string {
 function TableOfContents({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null
 
-  const groupedItems: { h2: TocItem; h3s: TocItem[] }[] = []
-  let currentGroup: { h2: TocItem; h3s: TocItem[] } | null = null
-
-  for (const item of items) {
-    if (item.level === 2) {
-      if (currentGroup) {
-        groupedItems.push(currentGroup)
-      }
-      currentGroup = { h2: item, h3s: [] }
-    } else if (item.level === 3 && currentGroup) {
-      currentGroup.h3s.push(item)
-    }
-  }
-  if (currentGroup) {
-    groupedItems.push(currentGroup)
-  }
+  // Only show h2 headings for a minimal ToC
+  const h2Items = items.filter(item => item.level === 2)
+  
+  if (h2Items.length === 0) return null
 
   return (
-    <nav 
+    <aside 
       aria-label="Table of Contents"
-      className="hidden xl:block sticky top-28 w-[240px] flex-shrink-0"
+      className="hidden lg:block w-[200px] flex-shrink-0"
     >
-      <span 
-        className="block font-sans text-[12px] font-medium uppercase tracking-wide mb-4"
-        style={{ color: '#9a9488' }}
-      >
-        In this article
-      </span>
-      <ul className="space-y-2 border-l" style={{ borderColor: '#E0DED6' }}>
-        {groupedItems.map((group) => (
-          <li key={group.h2.id}>
-            <a 
-              href={`#${group.h2.id}`}
-              className="block pl-4 py-1 font-sans text-[13px] leading-snug transition-colors hover:text-[#314dd0]"
-              style={{ color: '#5a5a54' }}
-            >
-              {group.h2.text}
-            </a>
-            {group.h3s.length > 0 && (
-              <ul className="space-y-1 mt-1">
-                {group.h3s.map((h3) => (
-                  <li key={h3.id}>
-                    <a 
-                      href={`#${h3.id}`}
-                      className="block pl-8 py-1 font-sans text-[12px] leading-snug transition-colors hover:text-[#314dd0]"
-                      style={{ color: '#9a9488' }}
-                    >
-                      {h3.text}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </nav>
+      <div className="sticky top-28">
+        <span 
+          className="block font-sans text-[11px] font-medium uppercase tracking-wide mb-3"
+          style={{ color: '#9a9488' }}
+        >
+          Contents
+        </span>
+        <ul className="space-y-1.5 border-l" style={{ borderColor: '#E0DED6' }}>
+          {h2Items.map((item) => (
+            <li key={item.id}>
+              <a 
+                href={`#${item.id}`}
+                className="block pl-3 py-0.5 font-sans text-[12px] leading-snug transition-colors hover:text-[#314dd0]"
+                style={{ color: '#5a5a54' }}
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
   )
 }
 
@@ -155,7 +130,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
       
       <article className="pt-32 pb-20 px-6">
         {/* Header - Two Column Layout */}
-        <header className="max-w-[1200px] mx-auto mb-10">
+        <header className="max-w-[960px] lg:max-w-[1100px] mx-auto mb-10">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
@@ -225,9 +200,9 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
         </header>
 
         {/* Two Column Layout: Content + Sticky ToC */}
-        <div className="max-w-[1200px] mx-auto flex gap-12">
+        <div className="max-w-[960px] lg:max-w-[1100px] mx-auto flex gap-8 lg:gap-12">
           {/* Main Content Column */}
-          <div className="flex-1 max-w-[720px]">
+          <div className="flex-1 min-w-0">
             {/* Author Card - Minimal */}
             <div className="flex items-center gap-3 mb-6">
               <div
@@ -279,7 +254,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[1200px] mx-auto mt-16">
+          <section className="max-w-[960px] lg:max-w-[1100px] mx-auto mt-16">
             <h2 
               className="font-serif text-[24px] font-medium mb-6"
               style={{ color: '#111110' }}
