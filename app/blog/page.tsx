@@ -17,27 +17,23 @@ function formatDate(dateString: string): string {
   })
 }
 
-function BlogCardImage({ src, alt }: { src: string; alt: string }) {
-  const [isLoaded, setIsLoaded] = useState(false)
-  
+const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
+
+function BlogCardImage({ src, alt, priority = false }: { src: string; alt: string; priority?: boolean }) {
   return (
     <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
-      {/* Blur placeholder */}
-      <div 
-        className={`absolute inset-0 bg-gradient-to-br from-[#E8E6DE] to-[#D4D2CA] transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
-      >
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent" 
-          style={{ animation: 'shimmer 1.5s infinite' }} 
-        />
-      </div>
       <Image
         src={src}
         alt={alt}
-        fill
+        width={400}
+        height={210}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        className={`object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        onLoad={() => setIsLoaded(true)}
+        className="object-cover w-full h-full"
         quality={75}
+        placeholder="blur"
+        blurDataURL={BLUR_DATA_URL}
+        priority={priority}
+        loading={priority ? "eager" : "lazy"}
       />
     </div>
   )
@@ -134,8 +130,9 @@ export default function BlogPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts.map((post) => {
+              {posts.map((post, index) => {
                 const imageUrl = post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`
+                const isFirstRow = index < 3
                 return (
                 <Link
                   key={post.id}
@@ -143,7 +140,7 @@ export default function BlogPage() {
                   className="block p-4 transition-colors duration-200 hover:bg-[#F3F2EC] rounded-lg border"
                   style={{ borderColor: '#E0DED6' }}
                 >
-                  <BlogCardImage src={imageUrl} alt={post.Name} />
+                  <BlogCardImage src={imageUrl} alt={post.Name} priority={isFirstRow} />
                   <time
                     className="text-[13px] font-medium"
                     style={{ color: '#9a9488' }}
