@@ -207,7 +207,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
       
       <article className="pt-32 pb-20 px-6">
         {/* Header - Two Column Layout */}
-        <header className="max-w-[1200px] mx-auto mb-10">
+        <header className="max-w-[720px] lg:max-w-[1000px] mx-auto mb-10">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
@@ -277,9 +277,9 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
         </header>
 
         {/* Two Column Layout: Content + Sticky ToC */}
-        <div className="max-w-[1200px] mx-auto flex gap-12">
+        <div className="max-w-[720px] lg:max-w-[1000px] mx-auto lg:flex lg:gap-12">
           {/* Main Content Column */}
-          <div className="flex-1 max-w-[720px]">
+          <div className="flex-1 lg:max-w-[720px]">
             {/* Author Card - Minimal */}
             <div className="flex items-center gap-3 mb-6">
               <div
@@ -331,7 +331,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[1200px] mx-auto mt-16">
+          <section className="max-w-[720px] lg:max-w-[1000px] mx-auto mt-16">
             <h2 
               className="font-serif text-[24px] font-medium mb-6"
               style={{ color: '#111110' }}
