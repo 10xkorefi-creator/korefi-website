@@ -21,9 +21,10 @@ const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAY
 
 interface Props {
   post: BlogPost
+  relatedPosts: BlogPost[]
 }
 
-export default function BlogPostClient({ post }: Props) {
+export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const richText = post['rich - text'] || ''
 
@@ -104,43 +105,6 @@ export default function BlogPostClient({ post }: Props) {
         </header>
 
         <div className="max-w-[960px] mx-auto">
-          {/* Author Card */}
-          <div 
-            className="flex items-center gap-4 p-4 rounded-[12px] mb-8"
-            style={{ backgroundColor: '#F3F2EC', border: '1px solid #E0DED6' }}
-          >
-            <div
-              className="w-[56px] h-[56px] rounded-full overflow-hidden flex-shrink-0"
-              style={{ border: '1px solid #E0DED6' }}
-            >
-              <img
-                src="/Vijay.png"
-                alt="Vijay Lohchab"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-[15px] font-medium" style={{ color: '#111110' }}>
-                  Vijay Lohchab
-                </span>
-                <a 
-                  href="https://www.linkedin.com/in/vijay-lohchab/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="opacity-60 hover:opacity-100 transition-opacity"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#314dd0">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                  </svg>
-                </a>
-              </div>
-              <span className="text-[13px]" style={{ color: '#9a9488' }}>
-                Founding member, Korefi
-              </span>
-            </div>
-          </div>
-
           {/* Divider */}
           <div
             className="h-[1px] mb-10"
@@ -152,7 +116,92 @@ export default function BlogPostClient({ post }: Props) {
             className="blog-content"
             dangerouslySetInnerHTML={{ __html: richText }}
           />
+
+          {/* Divider */}
+          <div
+            className="h-[1px] my-10"
+            style={{ backgroundColor: '#E0DED6' }}
+          />
+
+          {/* Author Card */}
+          <div className="flex items-center gap-3">
+            <div
+              className="w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0"
+              style={{ border: '1px solid #E0DED6' }}
+            >
+              <img
+                src="/Vijay.png"
+                alt="Vijay Lohchab"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] font-medium" style={{ color: '#111110' }}>
+                  Vijay Lohchab
+                </span>
+                <a 
+                  href="https://www.linkedin.com/in/vijay-lohchab/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:opacity-70 transition-opacity"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </a>
+              </div>
+              <span className="text-[12px]" style={{ color: '#9a9488' }}>
+                Founding member, Korefi
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* Related Posts Section */}
+        {relatedPosts.length > 0 && (
+          <section className="max-w-[960px] mx-auto mt-16">
+            <h2 
+              className="font-serif text-[24px] font-medium mb-6"
+              style={{ color: '#111110' }}
+            >
+              Related Articles
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedPosts.map((relatedPost) => (
+                <Link
+                  key={relatedPost.id}
+                  href={`/blog/${relatedPost.slug}`}
+                  className="block p-4 rounded-lg border transition-colors hover:bg-[#F3F2EC]"
+                  style={{ borderColor: '#E0DED6' }}
+                >
+                  <div className="relative aspect-video w-full mb-3 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
+                    <Image
+                      src={relatedPost.Image || `/api/og?title=${encodeURIComponent(relatedPost.Name)}`}
+                      alt={relatedPost.Name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      quality={75}
+                    />
+                  </div>
+                  <time
+                    className="text-[12px] font-medium"
+                    style={{ color: '#9a9488' }}
+                  >
+                    {formatDate(relatedPost.created_at)}
+                  </time>
+                  <h3
+                    className="font-serif text-[16px] font-medium mt-1 line-clamp-2"
+                    style={{ color: '#111110', lineHeight: 1.3 }}
+                  >
+                    {relatedPost.Name}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
 
       <Footer />

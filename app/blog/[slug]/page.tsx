@@ -10,7 +10,6 @@ interface Props {
 async function getPost(slug: string): Promise<BlogPost | null> {
   // Decode URL-encoded characters (e.g., %26 -> &)
   const decodedSlug = decodeURIComponent(slug)
-  console.log('[v0] Fetching post with slug:', slug, '-> decoded:', decodedSlug)
   
   const { data, error } = await supabase
     .from('korefi_blog')
@@ -18,10 +17,19 @@ async function getPost(slug: string): Promise<BlogPost | null> {
     .eq('slug', decodedSlug)
     .single()
 
-  console.log('[v0] Post fetch result - data:', data)
-  console.log('[v0] Post fetch result - error:', error)
-
   if (error || !data) return null
+  return data
+}
+
+async function getRelatedPosts(currentPostId: number): Promise<BlogPost[]> {
+  const { data, error } = await supabase
+    .from('korefi_blog')
+    .select('*')
+    .neq('id', currentPostId)
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  if (error || !data) return []
   return data
 }
 
@@ -71,5 +79,7 @@ export default async function BlogPostPage({ params }: Props) {
     notFound()
   }
 
-  return <BlogPostClient post={post} />
+  const relatedPosts = await getRelatedPosts(post.id)
+
+  return <BlogPostClient post={post} relatedPosts={relatedPosts} />
 }
