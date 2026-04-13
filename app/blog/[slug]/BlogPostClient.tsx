@@ -17,6 +17,131 @@ function formatDate(dateString: string): string {
   })
 }
 
+// Generate a slug ID from heading text
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove punctuation
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Remove consecutive hyphens
+    .trim()
+}
+
+// Headings to exclude from ToC
+const EXCLUDED_HEADINGS = ['key takeaways', 'faq']
+
+interface TocItem {
+  id: string
+  text: string
+  level: 2 | 3
+}
+
+// Parse headings from HTML and build ToC structure
+function parseHeadings(html: string): TocItem[] {
+  const headingRegex = /<h([23])[^>]*>(.*?)<\/h[23]>/gi
+  const items: TocItem[] = []
+  let match
+
+  while ((match = headingRegex.exec(html)) !== null) {
+    const level = parseInt(match[1]) as 2 | 3
+    // Strip HTML tags from heading text
+    const text = match[2].replace(/<[^>]*>/g, '').trim()
+    
+    // Skip excluded headings
+    if (EXCLUDED_HEADINGS.includes(text.toLowerCase())) {
+      continue
+    }
+    
+    const id = generateSlug(text)
+    items.push({ id, text, level })
+  }
+
+  return items
+}
+
+// Inject IDs into headings in HTML content
+function injectHeadingIds(html: string): string {
+  return html.replace(/<h([23])([^>]*)>(.*?)<\/h([23])>/gi, (match, level, attrs, content) => {
+    const text = content.replace(/<[^>]*>/g, '').trim()
+    const id = generateSlug(text)
+    // Check if id attribute already exists
+    if (attrs.includes('id=')) {
+      return match
+    }
+    return `<h${level}${attrs} id="${id}">${content}</h${level}>`
+  })
+}
+
+// Table of Contents component
+function TableOfContents({ items }: { items: TocItem[] }) {
+  if (items.length === 0) return null
+
+  // Group h3s under their parent h2
+  const groupedItems: { h2: TocItem; h3s: TocItem[] }[] = []
+  let currentGroup: { h2: TocItem; h3s: TocItem[] } | null = null
+
+  for (const item of items) {
+    if (item.level === 2) {
+      if (currentGroup) {
+        groupedItems.push(currentGroup)
+      }
+      currentGroup = { h2: item, h3s: [] }
+    } else if (item.level === 3 && currentGroup) {
+      currentGroup.h3s.push(item)
+    }
+  }
+  if (currentGroup) {
+    groupedItems.push(currentGroup)
+  }
+
+  return (
+    <nav 
+      aria-label="Table of Contents"
+      className="p-6 rounded-lg mb-8"
+      style={{ backgroundColor: '#F3F2EC', border: '1px solid #E0DED6' }}
+    >
+      <span 
+        className="block text-[13px] font-medium mb-3"
+        style={{ color: '#9a9488' }}
+      >
+        In this article
+      </span>
+      <ol className="list-decimal list-inside space-y-2">
+        {groupedItems.map((group, index) => (
+          <li key={group.h2.id} className="text-[15px]" style={{ color: '#111110' }}>
+            <a 
+              href={`#${group.h2.id}`}
+              className="hover:underline underline-offset-2"
+              style={{ color: '#111110' }}
+            >
+              {group.h2.text}
+            </a>
+            {group.h3s.length > 0 && (
+              <ol className="list-decimal list-inside mt-2 ml-5 space-y-1">
+                {group.h3s.map((h3) => (
+                  <li 
+                    key={h3.id} 
+                    className="text-[14px]"
+                    style={{ color: '#5a5a54' }}
+                  >
+                    <a 
+                      href={`#${h3.id}`}
+                      className="hover:underline underline-offset-2"
+                      style={{ color: '#5a5a54' }}
+                    >
+                      {h3.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
 const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
 
 interface Props {
@@ -26,6 +151,10 @@ interface Props {
 export default function BlogPostClient({ post }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const richText = post['rich - text'] || ''
+  
+  // Parse headings for ToC and inject IDs into content
+  const tocItems = parseHeadings(richText)
+  const contentWithIds = injectHeadingIds(richText)
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#FAFAF7' }}>
@@ -104,6 +233,9 @@ export default function BlogPostClient({ post }: Props) {
         </header>
 
         <div className="max-w-[960px] mx-auto">
+          {/* Table of Contents */}
+          <TableOfContents items={tocItems} />
+
           {/* Author Card */}
           <div 
             className="flex items-center gap-4 p-4 rounded-[12px] mb-8"
@@ -150,7 +282,7 @@ export default function BlogPostClient({ post }: Props) {
           {/* Content */}
           <div
             className="blog-content"
-            dangerouslySetInnerHTML={{ __html: richText }}
+            dangerouslySetInnerHTML={{ __html: contentWithIds }}
           />
         </div>
       </article>
@@ -173,6 +305,7 @@ export default function BlogPostClient({ post }: Props) {
           color: #111110;
           margin-top: 48px;
           margin-bottom: 20px;
+          scroll-margin-top: 100px;
         }
 
         .blog-content h3 {
@@ -183,6 +316,7 @@ export default function BlogPostClient({ post }: Props) {
           color: #111110;
           margin-top: 36px;
           margin-bottom: 16px;
+          scroll-margin-top: 100px;
         }
 
         .blog-content h4 {
