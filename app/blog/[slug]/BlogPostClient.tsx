@@ -17,6 +17,8 @@ function formatDate(dateString: string): string {
   })
 }
 
+const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
+
 interface Props {
   post: BlogPost
 }
@@ -87,11 +89,14 @@ export default function BlogPostClient({ post }: Props) {
                 <Image
                   src={post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`}
                   alt={post.Name}
-                  fill
+                  width={1200}
+                  height={630}
                   sizes="(max-width: 768px) 100vw, 40vw"
-                  className="object-cover object-center"
+                  className="object-cover object-center w-full h-full"
                   priority
                   quality={85}
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
                 />
               </div>
             </div>
