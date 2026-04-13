@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { BlogPost } from '@/lib/supabase'
@@ -71,42 +71,89 @@ function injectHeadingIds(html: string): string {
   })
 }
 
-// Table of Contents component - Sticky sidebar version
-function TableOfContents({ items }: { items: TocItem[] }) {
+// Table of Contents component - Sticky sidebar version with active state tracking
+function TableOfContents({ items, activeId }: { items: TocItem[]; activeId: string }) {
   if (items.length === 0) return null
 
-  // Only show h2 headings for a minimal ToC
-  const h2Items = items.filter(item => item.level === 2)
-  
-  if (h2Items.length === 0) return null
+  const groupedItems: { h2: TocItem; h3s: TocItem[] }[] = []
+  let currentGroup: { h2: TocItem; h3s: TocItem[] } | null = null
+
+  for (const item of items) {
+    if (item.level === 2) {
+      if (currentGroup) {
+        groupedItems.push(currentGroup)
+      }
+      currentGroup = { h2: item, h3s: [] }
+    } else if (item.level === 3 && currentGroup) {
+      currentGroup.h3s.push(item)
+    }
+  }
+  if (currentGroup) {
+    groupedItems.push(currentGroup)
+  }
+
+  // Check if an h2 or any of its h3s is active
+  const isGroupActive = (group: { h2: TocItem; h3s: TocItem[] }) => {
+    return group.h2.id === activeId || group.h3s.some(h3 => h3.id === activeId)
+  }
 
   return (
-    <aside 
+    <nav 
       aria-label="Table of Contents"
-      className="hidden lg:block w-[200px] flex-shrink-0"
+      className="hidden lg:block sticky top-28 w-[220px] flex-shrink-0"
     >
-      <div className="sticky top-28">
-        <span 
-          className="block font-sans text-[11px] font-medium uppercase tracking-wide mb-3"
-          style={{ color: '#9a9488' }}
-        >
-          Contents
-        </span>
-        <ul className="space-y-1.5 border-l" style={{ borderColor: '#E0DED6' }}>
-          {h2Items.map((item) => (
-            <li key={item.id}>
+      <span 
+        className="block font-sans text-[11px] font-medium uppercase tracking-wide mb-4"
+        style={{ color: '#9a9488' }}
+      >
+        Contents
+      </span>
+      <ul className="space-y-1 border-l" style={{ borderColor: '#E0DED6' }}>
+        {groupedItems.map((group) => {
+          const isH2Active = group.h2.id === activeId
+          const isChildActive = group.h3s.some(h3 => h3.id === activeId)
+          const showAsActive = isH2Active || isChildActive
+          
+          return (
+            <li key={group.h2.id}>
               <a 
-                href={`#${item.id}`}
-                className="block pl-3 py-0.5 font-sans text-[12px] leading-snug transition-colors hover:text-[#314dd0]"
-                style={{ color: '#5a5a54' }}
+                href={`#${group.h2.id}`}
+                className={`block pl-3 py-1 font-sans text-[13px] leading-snug transition-colors hover:text-[#314dd0] ${showAsActive ? 'border-l-2 -ml-[1px]' : ''}`}
+                style={{ 
+                  color: showAsActive ? '#314dd0' : '#5a5a54',
+                  borderColor: showAsActive ? '#314dd0' : 'transparent',
+                  fontWeight: showAsActive ? 500 : 400
+                }}
               >
-                {item.text}
+                {group.h2.text}
               </a>
+              {group.h3s.length > 0 && (
+                <ul className="space-y-0.5 mt-0.5">
+                  {group.h3s.map((h3) => {
+                    const isH3Active = h3.id === activeId
+                    return (
+                      <li key={h3.id}>
+                        <a 
+                          href={`#${h3.id}`}
+                          className={`block pl-6 py-0.5 font-sans text-[12px] leading-snug transition-colors hover:text-[#314dd0] ${isH3Active ? 'border-l-2 -ml-[1px]' : ''}`}
+                          style={{ 
+                            color: isH3Active ? '#314dd0' : '#9a9488',
+                            borderColor: isH3Active ? '#314dd0' : 'transparent',
+                            fontWeight: isH3Active ? 500 : 400
+                          }}
+                        >
+                          {h3.text}
+                        </a>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
             </li>
-          ))}
-        </ul>
-      </div>
-    </aside>
+          )
+        })}
+      </ul>
+    </nav>
   )
 }
 
@@ -117,11 +164,41 @@ interface Props {
 
 export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeId, setActiveId] = useState('')
   const richText = post['rich - text'] || ''
   
   // Parse headings for ToC and inject IDs into content
   const tocItems = parseHeadings(richText)
   const contentWithIds = injectHeadingIds(richText)
+
+  // Track active section based on scroll position
+  useEffect(() => {
+    const headingIds = tocItems.map(item => item.id)
+    if (headingIds.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        })
+      },
+      {
+        rootMargin: '-100px 0px -60% 0px',
+        threshold: 0
+      }
+    )
+
+    headingIds.forEach((id) => {
+      const element = document.getElementById(id)
+      if (element) {
+        observer.observe(element)
+      }
+    })
+
+    return () => observer.disconnect()
+  }, [tocItems])
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#FAFAF7' }}>
@@ -130,7 +207,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
       
       <article className="pt-32 pb-20 px-6">
         {/* Header - Two Column Layout */}
-        <header className="max-w-[960px] lg:max-w-[1100px] mx-auto mb-10">
+        <header className="max-w-[1200px] mx-auto mb-10">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-[14px] font-medium mb-6 transition-colors hover:opacity-70"
@@ -200,9 +277,9 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
         </header>
 
         {/* Two Column Layout: Content + Sticky ToC */}
-        <div className="max-w-[960px] lg:max-w-[1100px] mx-auto flex gap-8 lg:gap-12">
+        <div className="max-w-[1200px] mx-auto flex gap-12">
           {/* Main Content Column */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 max-w-[720px]">
             {/* Author Card - Minimal */}
             <div className="flex items-center gap-3 mb-6">
               <div
@@ -249,12 +326,12 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
           </div>
 
           {/* Sticky Table of Contents - Right Side */}
-          <TableOfContents items={tocItems} />
+          <TableOfContents items={tocItems} activeId={activeId} />
         </div>
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-[960px] lg:max-w-[1100px] mx-auto mt-16">
+          <section className="max-w-[1200px] mx-auto mt-16">
             <h2 
               className="font-serif text-[24px] font-medium mb-6"
               style={{ color: '#111110' }}
