@@ -20,8 +20,10 @@ function formatDate(dateString: string): string {
 const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg=="
 
 function BlogCardImage({ src, alt, priority = false }: { src: string; alt: string; priority?: boolean }) {
+  const [loaded, setLoaded] = useState(false)
+  
   return (
-    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
+    <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#0a0a2e' }}>
       <Image
         src={src}
         alt={alt}
@@ -29,11 +31,17 @@ function BlogCardImage({ src, alt, priority = false }: { src: string; alt: strin
         height={210}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         className="object-cover w-full h-full"
+        style={{
+          opacity: loaded ? 1 : 0.4,
+          filter: loaded ? 'blur(0px)' : 'blur(20px)',
+          transition: 'opacity 0.4s ease, filter 0.4s ease'
+        }}
         quality={75}
         placeholder="blur"
         blurDataURL={BLUR_DATA_URL}
         priority={priority}
         loading={priority ? "eager" : "lazy"}
+        onLoad={() => setLoaded(true)}
       />
     </div>
   )

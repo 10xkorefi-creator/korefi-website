@@ -165,6 +165,7 @@ interface Props {
 export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeId, setActiveId] = useState('')
+  const [featureImageLoaded, setFeatureImageLoaded] = useState(false)
   const richText = post['rich - text'] || ''
   
   // Parse headings for ToC and inject IDs into content
@@ -258,7 +259,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
             
             {/* Right Column - Image (2/5 = 40%) */}
             <div className="w-full md:w-2/5 order-1 md:order-2">
-              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[10px] shadow-md">
+              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[10px] shadow-md" style={{ backgroundColor: '#0a0a2e' }}>
                 <Image
                   src={post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`}
                   alt={post.Name}
@@ -266,10 +267,16 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
                   height={630}
                   sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover object-center w-full h-full"
+                  style={{
+                    opacity: featureImageLoaded ? 1 : 0.4,
+                    filter: featureImageLoaded ? 'blur(0px)' : 'blur(20px)',
+                    transition: 'opacity 0.3s ease, filter 0.3s ease'
+                  }}
                   priority
                   quality={85}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
+                  onLoad={() => setFeatureImageLoaded(true)}
                 />
               </div>
             </div>
