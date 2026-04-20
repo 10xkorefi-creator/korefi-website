@@ -5,7 +5,7 @@ import path from 'path'
 
 export const revalidate = 86400 // Regenerate every 24 hours
 
-const BASE_URL = 'https://www.korefi.ai'
+const BASE_URL = 'https://korefi.ai'
 
 // Recursively scan app directory for page.tsx files
 function discoverStaticPages(dir: string, basePath: string = ''): string[] {
@@ -60,8 +60,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: today,
-    changeFrequency: 'monthly',
-    priority: route === '/' ? 1.0 : 0.8,
+    changeFrequency: route === '/' ? 'daily' : route === '/blog' ? 'daily' : 'monthly',
+    priority: route === '/' ? 1.0 : route === '/blog' ? 0.9 : 0.8,
   }))
   
   // Part B: Dynamic blog pages from Supabase
@@ -79,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${BASE_URL}/blog/${encodeURIComponent(post.slug)}`,
         lastModified: post.created_at,
         changeFrequency: 'weekly',
-        priority: 0.7,
+        priority: 0.8,
       }))
     }
   } catch {

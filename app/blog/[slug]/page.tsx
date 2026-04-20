@@ -3,6 +3,18 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import BlogPostClient from './BlogPostClient'
 
+// Revalidate every hour for ISR
+export const revalidate = 3600
+
+// Pre-generate blog pages at build time
+export async function generateStaticParams() {
+  const { data: blogs } = await supabase
+    .from('korefi_blog')
+    .select('slug')
+
+  return (blogs || []).map((post) => ({ slug: post.slug }))
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }
@@ -44,15 +56,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.Name)}`
+  const canonicalUrl = `https://korefi.ai/blog/${post.slug}`
 
   return {
     title: `${post.Name} — KoreFi Blog`,
     description: post.Description || 'Read this article on the KoreFi Blog.',
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: post.Name,
       description: post.Description || 'Read this article on the KoreFi Blog.',
       type: 'article',
       publishedTime: post.created_at,
+      url: canonicalUrl,
       images: [
         {
           url: ogImageUrl,
