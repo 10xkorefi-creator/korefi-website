@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.Name)}`
-  const canonicalUrl = `https://korefi.ai/blog/${post.slug}`
+  const canonicalUrl = `https://www.korefi.ai/blog/${post.slug}`
 
   return {
     title: `${post.Name} — KoreFi Blog`,
