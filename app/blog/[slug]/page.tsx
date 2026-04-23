@@ -56,20 +56,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(post.Name)}`
-  const canonicalUrl = `https://www.korefi.ai/blog/${post.slug}`
 
   return {
     title: `${post.Name} — KoreFi Blog`,
     description: post.Description || 'Read this article on the KoreFi Blog.',
     alternates: {
-      canonical: canonicalUrl,
+      canonical: `/blog/${post.slug}`,
     },
     openGraph: {
       title: post.Name,
       description: post.Description || 'Read this article on the KoreFi Blog.',
       type: 'article',
       publishedTime: post.created_at,
-      url: canonicalUrl,
+      url: `https://korefi.ai/blog/${post.slug}`,
       images: [
         {
           url: ogImageUrl,

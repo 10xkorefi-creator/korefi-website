@@ -17,6 +17,7 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://korefi.ai'),
   title: 'KoreFi — Tax Credits for Restaurants',
   description: 'Done-for-you accounting that finds missed tax credits, cleans up your books, and claims credits on your behalf. Success-based pricing — you pay nothing upfront.',
   generator: 'v0.app',
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
     title: 'KoreFi — Tax Credits for Restaurants',
     description: 'Done-for-you accounting that finds missed tax credits, cleans up your books, and claims credits on your behalf.',
     type: 'website',
+    url: 'https://korefi.ai',
     images: [
       {
         url: '/korefi-logo-only.png',
