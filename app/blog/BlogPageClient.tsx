@@ -21,6 +21,7 @@ const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAY
 
 function BlogCardImage({ src, alt, priority = false }: { src: string; alt: string; priority?: boolean }) {
   const [loaded, setLoaded] = useState(false)
+  const isOgImage = src.startsWith('/api/og')
   
   return (
     <div className="relative aspect-video w-full mb-4 overflow-hidden rounded-lg" style={{ backgroundColor: '#0a0a2e' }}>
@@ -41,6 +42,7 @@ function BlogCardImage({ src, alt, priority = false }: { src: string; alt: strin
         blurDataURL={BLUR_DATA_URL}
         priority={priority}
         loading={priority ? "eager" : "lazy"}
+        unoptimized={isOgImage}
         onLoad={() => setLoaded(true)}
       />
     </div>
