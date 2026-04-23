@@ -166,6 +166,8 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeId, setActiveId] = useState('')
   const [featureImageLoaded, setFeatureImageLoaded] = useState(false)
+  const featureImageSrc = post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`
+  const isOgFeatureImage = featureImageSrc.startsWith('/api/og')
   const richText = post['rich - text'] || ''
   
   // Parse headings for ToC and inject IDs into content
@@ -261,7 +263,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
             <div className="w-full md:w-2/5 order-1 md:order-2">
               <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[10px] shadow-md" style={{ backgroundColor: '#0a0a2e' }}>
                 <Image
-                  src={post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`}
+                  src={featureImageSrc}
                   alt={post.Name}
                   width={1200}
                   height={630}
@@ -276,6 +278,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
                   quality={85}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
+                  unoptimized={isOgFeatureImage}
                   onLoad={() => setFeatureImageLoaded(true)}
                 />
               </div>
@@ -346,7 +349,10 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
               Related Articles
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {relatedPosts.map((relatedPost) => (
+              {relatedPosts.map((relatedPost) => {
+                const relatedImageSrc = relatedPost.Image || `/api/og?title=${encodeURIComponent(relatedPost.Name)}`
+                const isOgRelatedImage = relatedImageSrc.startsWith('/api/og')
+                return (
                 <Link
                   key={relatedPost.id}
                   href={`/blog/${relatedPost.slug}`}
@@ -355,12 +361,13 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
                 >
                   <div className="relative aspect-video w-full mb-3 overflow-hidden rounded-lg" style={{ backgroundColor: '#E8E6DE' }}>
                     <Image
-                      src={relatedPost.Image || `/api/og?title=${encodeURIComponent(relatedPost.Name)}`}
+                      src={relatedImageSrc}
                       alt={relatedPost.Name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover"
                       quality={75}
+                      unoptimized={isOgRelatedImage}
                     />
                   </div>
                   <time
@@ -375,9 +382,9 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
                   >
                     {relatedPost.Name}
                   </h3>
-                </Link>
-              ))}
-            </div>
+  </Link>
+              )})}
+              </div>
           </section>
         )}
       </article>
