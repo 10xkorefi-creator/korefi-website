@@ -167,7 +167,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
   const [activeId, setActiveId] = useState('')
   const [featureImageLoaded, setFeatureImageLoaded] = useState(false)
   const featureImageSrc = post.Image || `/api/og?title=${encodeURIComponent(post.Name)}`
-  const isOgFeatureImage = featureImageSrc.startsWith('/api/og')
+  const isOgFeatureImage = featureImageSrc.includes('/api/og')
   const richText = post['rich - text'] || ''
   
   // Parse headings for ToC and inject IDs into content
@@ -351,7 +351,7 @@ export default function BlogPostClient({ post, relatedPosts }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => {
                 const relatedImageSrc = relatedPost.Image || `/api/og?title=${encodeURIComponent(relatedPost.Name)}`
-                const isOgRelatedImage = relatedImageSrc.startsWith('/api/og')
+                const isOgRelatedImage = relatedImageSrc.includes('/api/og')
                 return (
                 <Link
                   key={relatedPost.id}
