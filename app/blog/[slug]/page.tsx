@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.Description || 'Read this article on the KoreFi Blog.',
       type: 'article',
       publishedTime: post.created_at,
-      url: `https://korefi.ai/blog/${post.slug}`,
+      url: `https://www.korefi.ai/blog/${post.slug}`,
       images: [
         {
           url: ogImageUrl,
