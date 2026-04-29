@@ -3,10 +3,19 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { supabase, BlogPost } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { Navbar } from '@/components/korefi/navbar'
 import { Footer } from '@/components/korefi/footer'
 import { WaitlistModal } from '@/components/korefi/waitlist-modal'
+
+type BlogPostPreview = {
+  id: string | number
+  created_at: string
+  Name: string
+  slug: string
+  Description: string | null
+  Image: string | null
+}
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -62,7 +71,7 @@ function BlogCardSkeleton() {
 }
 
 export default function BlogPageClient() {
-  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [posts, setPosts] = useState<BlogPostPreview[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -76,7 +85,7 @@ export default function BlogPageClient() {
           .order('created_at', { ascending: false })
 
         if (error) throw error
-        setPosts(data || [])
+        setPosts((data as BlogPostPreview[]) || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch posts')
       } finally {
