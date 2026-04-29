@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   description: 'Done-for-you accounting that finds missed tax credits, cleans up your books, and claims credits on your behalf. Success-based pricing — you pay nothing upfront.',
   generator: 'v0.app',
   keywords: ['restaurant accounting', 'tax credits', 'bookkeeping', 'FICA tip credits', 'R&D credits', 'restaurant CPA'],
+  verification: {
+    google: 'K15SFI7kR6qHPvLAPWZgUPtKMnT17bNilhIvwfzFOBE',
+  },
   openGraph: {
     title: 'KoreFi — Tax Credits for Restaurants',
     description: 'Done-for-you accounting that finds missed tax credits, cleans up your books, and claims credits on your behalf.',
