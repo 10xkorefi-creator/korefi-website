@@ -5,7 +5,7 @@ import path from 'path'
 
 export const revalidate = 86400 // Regenerate every 24 hours
 
-const BASE_URL = 'https://korefi.ai'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.korefi.ai'
 
 // Recursively scan app directory for page.tsx files
 function discoverStaticPages(dir: string, basePath: string = ''): string[] {

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: 'KoreFi Blog',
     description: 'Expert insights on restaurant tax credits, accounting best practices, and financial strategies for restaurant owners.',
     type: 'website',
-    url: 'https://korefi.ai/blog',
+    url: 'https://www.korefi.ai/blog',
   },
 }
 

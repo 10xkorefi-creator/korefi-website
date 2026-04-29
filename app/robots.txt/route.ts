@@ -65,7 +65,7 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://korefi.ai/sitemap.xml`
+Sitemap: https://www.korefi.ai/sitemap.xml`
 
   return new Response(robotsTxt, {
     headers: {
